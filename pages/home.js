@@ -1,5 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import React from 'react'
+var axios = require('axios');
+var FormData = require('form-data');
 
 const Main = () => {
 
@@ -16,6 +18,55 @@ const Main = () => {
     const [receiverName, setReceiverName] = React.useState('')
     const [receiverPhone, setReceiverPhone] = React.useState('')
     const [receiverAddress, setReceiverAddress] = React.useState('')
+
+
+    const postParcel = async () => {
+
+        var data = new FormData();
+        data.append('parcelCost', parcelCost);
+        data.append('parcelNotes', parcelNotes);
+        data.append('parcelStartingLocation', parcelStartingLocation);
+        data.append('parcelDestination', parcelDestination);
+        data.append('senderName', senderName);
+        data.append('senderPhoneNumber', senderPhone);
+        data.append('senderAddress', senderAddress);
+        data.append('receiverName', receiverName);
+        data.append('receiverPhoneNumber', receiverPhone);
+        data.append('receiverAddress', receiverAddress);
+        data.append('postedBy', sessionStorage.getItem('user'));
+
+        var config = {
+            method: 'post',
+            url: 'https://parcel-next-js.vercel.app/parcel',
+            headers: {
+                'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(function (response) {
+                console.log(JSON.stringify(response.data));
+                alert('Parcel added posted')
+                setParcelCost('')
+                setParcelNotes('')
+                setParcelStartingLocation('')
+                setParcelDestination('')
+                setSenderName('')
+                setSenderPhone('')
+                setSenderAddress('')
+                setReceiverName('')
+                setReceiverPhone('')
+                setReceiverAddress('')
+            })
+            .catch(function (error) {
+                for (let i = 0; i < error.response.data.errors.length; i++) {
+            alert(error.response.data.errors[i].msg)
+          }
+               // console.log(error);
+            });
+
+    }
 
 
     return (
@@ -70,7 +121,7 @@ const Main = () => {
                     <input placeholder='Enter Here....' value={receiverPhone} onChange={(e) => { setReceiverPhone(e.target.value) }} type="text" id="small-input" className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500" />
                 </div>
             </div>
-            <button className='text-gray-900 mt-8 mx-5 sm:mb-28 mb-40 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:ring-lime-300 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2'>Add Parcel</button>
+            <button className='text-gray-900 mt-8 mx-5 sm:mb-28 mb-40 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 hover:bg-gradient-to-br focus:ring-4 focus:ring-lime-300 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2' onClick={postParcel}>Add Parcel</button>
         </div>
     )
 }

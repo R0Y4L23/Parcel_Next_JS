@@ -1,8 +1,15 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import { useRouter } from 'next/router'
 
 const Navbar = () => {
     const router = useRouter()
+    useEffect(() => {
+        let token = sessionStorage.getItem('token')
+        if(!token&&(router.pathname!=='/'))
+        {
+            router.push('/')
+        }
+    }, [router, router.pathname])
     return (
         <header className={`text-gray-600 body-font bg-[#8BCA3A] ${router.pathname == "/" ? "hidden" : ""}`}>
             <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
@@ -16,7 +23,7 @@ const Navbar = () => {
                     <p className={`mr-5 hover:text-gray-900 ${router.pathname == "/myAccount" && "text-gray-900"} cursor-pointer font-medium`} onClick={() => { router.push("/myAccount") }}>My Account</p>
                 </nav>
                 <button
-                onClick={() => {router.push("/")}}
+                onClick={() => {sessionStorage.clear();router.push("/")}}
                     className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded font-medium text-base mt-4 md:mt-0">Log Out
                     <i className="fas fa-sign-out-alt ml-5"></i>
                 </button>
