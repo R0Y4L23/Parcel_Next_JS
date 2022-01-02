@@ -70,7 +70,7 @@ const save_parcel_data = async (data) => {
 
 const get_parcel_data_by_email = async (email) => {
     let data = await Parcel.find({
-        "senderEmail": email
+        "postedBy": email
     })
     return data
 }
